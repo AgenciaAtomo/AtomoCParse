@@ -1,0 +1,2304 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Átomo Contingência — Sistema de Contas/BM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<script>
+  // Anti-flash: aplica o tema antes do CSS renderizar
+  (function() {
+    var saved = localStorage.getItem('atomo_theme') || 'light';
+    document.documentElement.classList.add('theme-' + saved);
+  })();
+</script>
+<style>
+  :root,
+  .theme-light {
+    /* ═══ TEMA LIGHT — Átomo Finance ═══ */
+    --bg: #F5F7FA;
+    --surface: #FFFFFF;
+    --surface2: #F8FAFC;
+    --surface3: #EEF1F5;
+    --surface-alt: #E8F5E9;
+    --border: #E0E4EA;
+    --border2: #C5CDD8;
+    --accent: #00C853;
+    --accent-hover: #007B33;
+    --accent2: #0D7377;
+    --accent3: #1A1A2E;
+    --green: #00C853;
+    --yellow: #D69E2E;
+    --red: #E53E3E;
+    --text: #1A1A2E;
+    --text2: #4A5568;
+    --text3: #8896A6;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --sans: 'Inter', system-ui, sans-serif;
+    --heading: 'Space Grotesk', system-ui, sans-serif;
+    --shadow-sm: 0 1px 2px rgba(26, 26, 46, 0.04);
+    --shadow-md: 0 4px 12px rgba(26, 26, 46, 0.06);
+    /* hover de delete-row e highlights */
+    --tint-red: rgba(229, 62, 62, 0.08);
+    --tint-red-border: rgba(229, 62, 62, 0.25);
+    --tint-warn: rgba(214, 158, 46, 0.08);
+    --tint-warn-border: rgba(214, 158, 46, 0.3);
+    --tint-accent: rgba(0, 200, 83, 0.12);
+    /* status pill verde */
+    --pill-border: #B8E6C1;
+    --pill-color: var(--accent-hover);
+    --badge-border: #B8E6C1;
+    --badge-color: var(--accent-hover);
+    --hint-bg: var(--surface-alt);
+    --hint-border: #C8E6C9;
+    --hint-text: var(--text);
+    --hint-strong: var(--accent-hover);
+    --row-stripe: #FAFBFC;
+    --row-hover: var(--surface-alt);
+    --toast-shadow: 0 10px 30px rgba(26, 26, 46, 0.12), 0 2px 6px rgba(26, 26, 46, 0.06);
+    --glow-accent: 0 0 6px rgba(0, 200, 83, 0.5);
+    --glow-accent-md: 0 4px 12px rgba(0, 200, 83, 0.25);
+    --glow-accent-sm: 0 2px 8px rgba(0, 200, 83, 0.25);
+    --btn-primary-bg: var(--accent3);
+    --btn-primary-hover: #2D2D45;
+    --btn-primary-color: white;
+    --btn-purple-bg: var(--accent2);
+    --btn-purple-hover: #0A5A5D;
+    --btn-cyan-bg: var(--accent2);
+    --btn-cyan-hover: #0A5A5D;
+    --btn-green-bg: var(--accent);
+    --btn-green-hover: var(--accent-hover);
+  }
+
+  .theme-dark {
+    /* ═══ TEMA DARK — Átomo Desk original ═══ */
+    --bg: #0a0a0c;
+    --surface: #111114;
+    --surface2: #18181d;
+    --surface3: #1f1f26;
+    --surface-alt: #1a2a1f;
+    --border: #2a2a35;
+    --border2: #3a3a48;
+    --accent: #5b5bff;
+    --accent-hover: #4a4aee;
+    --accent2: #a855f7;
+    --accent3: #06b6d4;
+    --green: #22c55e;
+    --yellow: #eab308;
+    --red: #ef4444;
+    --text: #e8e8f0;
+    --text2: #9898b0;
+    --text3: #5a5a70;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --sans: 'Inter', system-ui, sans-serif;
+    --heading: 'Space Grotesk', system-ui, sans-serif;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --tint-red: rgba(239, 68, 68, 0.15);
+    --tint-red-border: rgba(239, 68, 68, 0.3);
+    --tint-warn: rgba(234, 179, 8, 0.08);
+    --tint-warn-border: rgba(234, 179, 8, 0.3);
+    --tint-accent: rgba(91, 91, 255, 0.2);
+    --pill-border: var(--border2);
+    --pill-color: var(--text2);
+    --badge-border: var(--border2);
+    --badge-color: var(--text2);
+    --hint-bg: var(--surface2);
+    --hint-border: var(--border);
+    --hint-text: var(--text2);
+    --hint-strong: var(--accent3);
+    --row-stripe: transparent;
+    --row-hover: var(--surface2);
+    --toast-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    --glow-accent: 0 0 6px rgba(91, 91, 255, 0.6);
+    --glow-accent-md: 0 4px 12px rgba(91, 91, 255, 0.3);
+    --glow-accent-sm: 0 2px 8px rgba(91, 91, 255, 0.3);
+    --btn-primary-bg: var(--accent);
+    --btn-primary-hover: #4a4aee;
+    --btn-primary-color: white;
+    --btn-purple-bg: var(--accent2);
+    --btn-purple-hover: #9333ea;
+    --btn-cyan-bg: #0891b2;
+    --btn-cyan-hover: #0e7490;
+    --btn-green-bg: #16a34a;
+    --btn-green-hover: #15803d;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Textura sutil — só aparece no dark */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .theme-dark body::before { opacity: 0.4; }
+
+  /* HEADER */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 28px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--accent3);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--heading);
+    font-weight: 700;
+    font-size: 16px;
+    color: white;
+    letter-spacing: -1px;
+  }
+
+  .logo-text {
+    font-family: var(--heading);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -0.3px;
+    color: var(--text);
+  }
+
+  .logo-sub {
+    font-family: var(--sans);
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-top: -2px;
+    font-weight: 500;
+  }
+
+  .header-status {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: var(--surface-alt);
+    border: 1px solid var(--pill-border);
+    font-size: 10px;
+    color: var(--pill-color);
+    font-weight: 600;
+    letter-spacing: 0.8px;
+  }
+
+  /* THEME TOGGLE */
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text2);
+    transition: all 0.15s;
+    padding: 0;
+    flex-shrink: 0;
+  }
+
+  .theme-toggle:hover {
+    background: var(--surface3);
+    border-color: var(--border2);
+    color: var(--text);
+    transform: rotate(15deg);
+  }
+
+  .theme-toggle svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Mostrar ícone correto por tema */
+  .theme-toggle .icon-sun { display: none; }
+  .theme-toggle .icon-moon { display: block; }
+  .theme-dark .theme-toggle .icon-sun { display: block; }
+  .theme-dark .theme-toggle .icon-moon { display: none; }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s infinite;
+    box-shadow: var(--glow-accent);
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .stat-count {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 11px;
+    color: var(--text2);
+  }
+
+  .stat-count span {
+    color: var(--accent3);
+    font-weight: 700;
+  }
+
+  /* MAIN LAYOUT */
+  main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* SECTION LABELS */
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .section-label span {
+    font-family: var(--heading);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text2);
+    font-weight: 600;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* INPUT BLOCK */
+  .input-grid {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 16px;
+    align-items: start;
+  }
+
+  textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 14px;
+    resize: vertical;
+    outline: none;
+    transition: all 0.15s;
+    line-height: 1.7;
+  }
+
+  textarea:focus {
+    border-color: var(--accent);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px var(--tint-accent);
+  }
+
+  textarea::placeholder {
+    color: var(--text3);
+  }
+
+  #input-area {
+    min-height: 200px;
+  }
+
+  /* BUTTONS */
+  .btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1px;
+    transition: all 0.15s;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .btn:active { transform: scale(0.97); }
+
+  /* Primary = ação principal */
+  .btn-primary {
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-color);
+  }
+
+  .btn-primary:hover {
+    background: var(--btn-primary-hover);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* Purple → teal no light, roxo no dark */
+  .btn-purple {
+    background: var(--btn-purple-bg);
+    color: white;
+  }
+
+  .btn-purple:hover {
+    background: var(--btn-purple-hover);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* Ghost = ação terciária */
+  .btn-ghost {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-ghost:hover {
+    background: var(--surface3);
+    border-color: var(--border2);
+  }
+
+  /* Green = CTA (verde Átomo no light, verde clássico no dark) */
+  .btn-green {
+    background: var(--btn-green-bg);
+    color: white;
+  }
+
+  .btn-green:hover {
+    background: var(--btn-green-hover);
+    box-shadow: var(--glow-accent-md);
+  }
+
+  /* Cyan → variante teal/cyan por tema */
+  .btn-cyan {
+    background: var(--btn-cyan-bg);
+    color: white;
+  }
+
+  .btn-cyan:hover {
+    background: var(--btn-cyan-hover);
+    box-shadow: var(--shadow-md);
+  }
+
+  .btn-sm {
+    padding: 6px 10px;
+    font-size: 11px;
+    border-radius: 6px;
+  }
+
+  .btn-icon {
+    font-size: 14px;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 4px 0;
+  }
+
+  .format-hint {
+    background: var(--hint-bg);
+    border: 1px solid var(--hint-border);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 11px;
+    color: var(--hint-text);
+    line-height: 1.85;
+    font-family: var(--sans);
+  }
+
+  .format-hint strong {
+    color: var(--hint-strong);
+    display: block;
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: var(--heading);
+  }
+
+  .format-hint code {
+    background: var(--surface);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent3);
+    border: 1px solid var(--border);
+  }
+
+  /* TABLE */
+  .table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .table-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--heading);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text);
+  }
+
+  .badge {
+    background: var(--surface-alt);
+    border: 1px solid var(--badge-border);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    color: var(--badge-color);
+    font-family: var(--sans);
+    font-weight: 600;
+  }
+
+  .table-actions {
+    display: flex;
+    gap: 6px;
+  }
+
+  .table-wrapper {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+  }
+
+  thead tr {
+    background: var(--surface3);
+    border-bottom: 1px solid var(--border);
+  }
+
+  th {
+    padding: 11px 12px;
+    text-align: left;
+    font-size: 10px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--text2);
+    white-space: nowrap;
+    font-weight: 700;
+    font-family: var(--sans);
+  }
+
+  th:first-child { width: 40px; }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+
+  /* Zebra striping — fundamental no light pra escanear 9 colunas */
+  tbody tr:nth-child(even) {
+    background: var(--row-stripe);
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--row-hover); }
+
+  td {
+    padding: 8px 12px;
+    vertical-align: middle;
+  }
+
+  td input {
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    width: 100%;
+    outline: none;
+    padding: 5px 8px;
+    border-radius: 5px;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+  }
+
+  td input:focus {
+    background: var(--surface);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--tint-accent);
+  }
+
+  td input.field-empty {
+    background: var(--tint-red);
+    border-color: var(--tint-red-border) !important;
+  }
+
+  td input.field-warn {
+    background: var(--tint-warn);
+    border-color: var(--tint-warn-border) !important;
+  }
+
+  td input.field-ok {
+    /* no highlight needed */
+  }
+
+  .row-num {
+    color: var(--text3);
+    font-size: 11px;
+    text-align: center;
+    font-family: var(--mono);
+  }
+
+  .delete-row {
+    background: none;
+    border: none;
+    color: var(--text3);
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 4px;
+    transition: all 0.15s;
+    font-size: 13px;
+  }
+
+  .delete-row:hover { background: var(--tint-red); color: var(--red); }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--text3);
+    font-size: 13px;
+    font-family: var(--sans);
+  }
+
+  .empty-state .icon { font-size: 32px; margin-bottom: 10px; opacity: 0.5; }
+
+  /* GARANTIA */
+  .garantia-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .field-label {
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    color: var(--text2);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+  }
+
+  .saved-pill {
+    background: var(--surface-alt);
+    color: var(--accent-hover);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 9px;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .saved-pill.show { opacity: 1; }
+
+  /* OUTPUT */
+  #output-area {
+    min-height: 160px;
+    font-size: 11.5px;
+  }
+
+  /* EXPORT */
+  .export-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .export-label {
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.3px;
+    color: var(--text2);
+    margin-right: 4px;
+    font-weight: 600;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 2px;
+    background: var(--surface3);
+    padding: 4px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    width: fit-content;
+  }
+
+  .tab {
+    padding: 8px 18px;
+    border-radius: 7px;
+    background: none;
+    border: none;
+    color: var(--text2);
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    transition: all 0.15s;
+  }
+
+  .tab:hover {
+    color: var(--text);
+  }
+
+  .tab.active {
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* GARANTIA NOME ROW */
+  .garantia-nome-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+    align-items: center;
+  }
+
+  .garantia-actions-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 600px) {
+    .garantia-nome-row {
+      flex-wrap: wrap;
+    }
+    .garantia-nome-row input {
+      width: 100%;
+      flex: unset;
+    }
+    .garantia-nome-row .btn {
+      flex: 1;
+      justify-content: center;
+      min-width: 0;
+    }
+    .garantia-actions-row .btn {
+      flex: 1;
+      justify-content: center;
+    }
+    #garantia-profiles {
+      gap: 6px;
+    }
+    .profile-pill {
+      font-size: 12px;
+      padding: 6px 14px;
+    }
+  }
+
+  /* GARANTIA PROFILE PILLS */
+  .profile-pill {
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text2);
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .profile-pill:hover {
+    border-color: var(--accent);
+    color: var(--text);
+    background: var(--surface-alt);
+  }
+
+  .profile-pill.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+    font-weight: 600;
+    box-shadow: var(--glow-accent-sm);
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--surface3); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+  /* TOAST */
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 12px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 1000;
+    box-shadow: var(--toast-shadow);
+  }
+
+  #toast.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  #toast.success { border-left: 3px solid var(--accent); }
+  #toast.success #toast-icon { color: var(--accent); }
+  #toast.error { border-left: 3px solid var(--red); }
+  #toast.error #toast-icon { color: var(--red); }
+
+  /* STATS BAR */
+  .stats-bar {
+    display: flex;
+    gap: 18px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    flex-wrap: wrap;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text2);
+    font-family: var(--sans);
+  }
+
+  .stat-item strong {
+    color: var(--text);
+    font-size: 14px;
+    font-family: var(--heading);
+    font-weight: 700;
+  }
+
+  .stat-sep {
+    width: 1px;
+    height: 18px;
+    background: var(--border);
+  }
+
+  /* ── TABLET ── */
+  /* MODEL SELECTOR PILLS */
+  .model-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--text2);
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .model-pill:hover {
+    border-color: var(--border2);
+    color: var(--text);
+    background: var(--surface3);
+  }
+
+  .model-pill input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border2);
+    background: var(--surface);
+    cursor: pointer;
+    position: relative;
+    margin: 0;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+
+  .model-pill input[type="radio"]:checked {
+    border-color: var(--accent);
+    background: var(--accent);
+  }
+
+  .model-pill input[type="radio"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: white;
+  }
+
+  .model-pill:has(input:checked) {
+    border-color: var(--accent);
+    background: var(--surface-alt);
+    color: var(--text);
+  }
+
+  .model-pill code {
+    background: var(--surface3);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--accent3);
+    font-weight: 600;
+  }
+
+  @media (max-width: 900px) {
+    .input-grid { grid-template-columns: 1fr; }
+    .btn-group { flex-direction: row; flex-wrap: wrap; }
+    .garantia-grid { grid-template-columns: 1fr; }
+    .format-hint { display: none; }
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 600px) {
+    header {
+      padding: 12px 16px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .logo-sub { display: none; }
+
+    .header-status {
+      gap: 10px;
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .status-pill { font-size: 9px; padding: 3px 8px; }
+    .stat-count { font-size: 10px; }
+
+    main {
+      padding: 14px 12px;
+      gap: 14px;
+    }
+
+    .card { padding: 14px 12px; }
+
+    /* Input: botões abaixo do textarea */
+    .input-grid {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    #input-area { min-height: 140px; font-size: 12px; }
+
+    .btn-group {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn {
+      flex: 1;
+      min-width: 140px;
+      padding: 12px 10px;
+      font-size: 12px;
+      justify-content: center;
+    }
+
+    /* Stats bar — empilhar em 2 colunas */
+    .stats-bar {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 10px 12px;
+    }
+
+    .stat-sep { display: none; }
+
+    .stat-item { font-size: 11px; }
+
+    /* Tabs */
+    .tabs { width: 100%; }
+    .tab { flex: 1; text-align: center; padding: 8px 6px; font-size: 10px; }
+
+    /* Table → card stack no mobile */
+    .table-wrapper { border: none; }
+
+    table thead { display: none; }
+
+    table, tbody, tr, td {
+      display: block;
+      width: 100%;
+    }
+
+    tbody tr {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 10px;
+      padding: 10px 10px 6px;
+      position: relative;
+    }
+
+    tbody tr:hover { background: var(--surface2); }
+
+    td {
+      padding: 3px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    td::before {
+      content: attr(data-label);
+      font-size: 9px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text3);
+      min-width: 80px;
+      flex-shrink: 0;
+    }
+
+    td input {
+      flex: 1;
+      font-size: 12px;
+      padding: 5px 8px;
+      background: var(--surface3);
+      border: 1px solid transparent;
+      border-radius: 5px;
+    }
+
+    .row-num {
+      position: absolute;
+      top: 8px;
+      right: 36px;
+      font-size: 10px;
+      color: var(--text3);
+    }
+
+    .row-num::before { display: none; }
+
+    td:last-child {
+      justify-content: flex-end;
+      padding-top: 6px;
+      border-top: 1px solid var(--border);
+      margin-top: 4px;
+    }
+
+    td:last-child::before { display: none; }
+
+    /* Table header row */
+    .table-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .table-actions { width: 100%; }
+    .table-actions .btn { flex: 1; justify-content: center; }
+
+    /* Garantia + Output empilhados */
+    .garantia-grid { grid-template-columns: 1fr; gap: 14px; }
+
+    #garantia-text { min-height: 100px; }
+    #output-area { min-height: 120px; }
+
+    /* Geração de botões lado a lado */
+    .card .btn-group { flex-direction: row; }
+    .card .btn-group .btn { flex: 1; font-size: 11px; padding: 10px 6px; }
+
+    /* Export bar */
+    .export-bar {
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .export-label { width: 100%; margin-bottom: 0; }
+
+    .export-bar .btn { flex: 1; min-width: 70px; justify-content: center; font-size: 11px; }
+    .export-bar .export-label { font-size: 10px; }
+    #btn-exportar-textos { width: 100%; justify-content: center; }
+
+    /* Toast */
+    #toast {
+      left: 12px;
+      right: 12px;
+      bottom: 16px;
+      font-size: 12px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">Á</div>
+    <div>
+      <div class="logo-text">Átomo Contingência</div>
+      <div class="logo-sub">Sistema de Contas / BM</div>
+    </div>
+  </div>
+  <div class="header-status">
+    <div class="stat-count">Contas: <span id="hdr-contas">0</span></div>
+    <div class="stat-count">BMs: <span id="hdr-bms">0</span></div>
+    <div class="status-pill">
+      <div class="status-dot"></div>
+      LOCAL · SEGURO
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Alternar tema" aria-label="Alternar tema">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<main>
+
+  <!-- BLOCO 1: INPUT -->
+  <div class="card">
+    <div class="section-label"><span>01 — Entrada de Dados</span></div>
+    <!-- Seletor de formato -->
+    <div class="format-selector" style="margin-bottom:14px">
+      <div class="field-label" style="margin-bottom:8px">🔀 Formato de entrada</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap" id="model-radios">
+        <label class="model-pill">
+          <input type="radio" name="model" value="1" checked onchange="onModelChange()">
+          <span><strong>Modelo 1</strong> · separador <code>|</code></span>
+        </label>
+        <label class="model-pill">
+          <input type="radio" name="model" value="2" onchange="onModelChange()">
+          <span><strong>Modelo 2</strong> · Email-first <code>:</code></span>
+        </label>
+        <label class="model-pill">
+          <input type="radio" name="model" value="3" onchange="onModelChange()">
+          <span><strong>Modelo 3</strong> · ID-first <code>:</code></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="input-grid">
+      <div>
+        <div class="field-label" id="input-label">📥 Lista bruta (separador: |)</div>
+        <textarea id="input-area" placeholder="Cole suas contas ou links aqui...
+
+Exemplo contas:
+100123456789|MinhaS3nha!|JBSWY3DPEHPK3PXP|email@gmail.com|senhaemail123
+
+Exemplo BMs:
+https://business.facebook.com/overview?business_id=123456|admin@empresa.com"></textarea>
+      </div>
+      <div>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="processarContas()">
+            <span class="btn-icon">🔵</span> Processar CONTAS
+          </button>
+          <button class="btn btn-purple" onclick="processarBMs()">
+            <span class="btn-icon">🟣</span> Processar BMs
+          </button>
+          <div class="divider"></div>
+          <button class="btn btn-ghost" onclick="limpar()">
+            <span class="btn-icon">🧹</span> Limpar tudo
+          </button>
+          <div class="divider"></div>
+          <div class="format-hint" id="format-hint">
+            <strong>⚡ Formato esperado</strong>
+            Cada linha = 1 item<br>
+            Campos separados por <code>|</code><br>
+            Detecção automática:<br>
+            🆔 IDs numéricos (8+ dígitos)<br>
+            📧 Emails com @<br>
+            🔐 2FA Base32<br>
+            🍪 Cookies (c_user=)<br>
+            📄 Documentos (/backup)<br>
+            🔑 Senhas (fallback)
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar" id="stats-bar" style="display:none">
+    <div class="stat-item"><strong id="st-total">0</strong> itens processados</div>
+    <div class="stat-sep"></div>
+    <div class="stat-item"><strong id="st-ok">0</strong> <span style="color:var(--green)">completos</span></div>
+    <div class="stat-sep"></div>
+    <div class="stat-item"><strong id="st-warn">0</strong> <span style="color:var(--yellow)">incompletos</span></div>
+    <div class="stat-sep"></div>
+    <div class="stat-item"><strong id="st-dup">0</strong> duplicados removidos</div>
+  </div>
+
+  <!-- BLOCO 2: TABELA -->
+  <div class="card">
+    <div class="section-label"><span>02 — Organização</span></div>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('contas')">📦 Contas FB</button>
+      <button class="tab" onclick="switchTab('bms')">📊 Business Manager</button>
+    </div>
+
+    <!-- CONTAS TABLE -->
+    <div class="tab-panel active" id="tab-contas" style="margin-top:14px">
+      <div class="table-header">
+        <div class="table-title">
+          📦 Contas Facebook
+          <span class="badge" id="count-contas">0 itens</span>
+        </div>
+        <div class="table-actions">
+          <button class="btn btn-ghost btn-sm" onclick="addRowContas()">+ Adicionar linha</button>
+          <button class="btn btn-ghost btn-sm" onclick="limparTabela('contas')">🗑 Limpar tabela</button>
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table id="tbl-contas">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>🆔 ID</th>
+              <th>🔑 Senha FB</th>
+              <th>🔐 2FA</th>
+              <th>📧 Email</th>
+              <th>🔑 Senha Email</th>
+              <th>📬 Email Rec.</th>
+              <th>📄 Documento</th>
+              <th>🍪 Cookies</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="body-contas">
+            <tr>
+              <td colspan="10">
+                <div class="empty-state">
+                  <div class="icon">📋</div>
+                  Nenhuma conta processada ainda.<br>Cole seus dados e clique em "Processar CONTAS".
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- BM TABLE -->
+    <div class="tab-panel" id="tab-bms" style="margin-top:14px">
+      <div class="table-header">
+        <div class="table-title">
+          📊 Business Managers
+          <span class="badge" id="count-bms">0 itens</span>
+        </div>
+        <div class="table-actions">
+          <button class="btn btn-ghost btn-sm" onclick="addRowBM()">+ Adicionar linha</button>
+          <button class="btn btn-ghost btn-sm" onclick="limparTabela('bms')">🗑 Limpar tabela</button>
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table id="tbl-bms">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>🔗 Link BM</th>
+              <th>📧 Email</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="body-bms">
+            <tr>
+              <td colspan="4">
+                <div class="empty-state">
+                  <div class="icon">📊</div>
+                  Nenhum BM processado ainda.<br>Cole seus dados e clique em "Processar BMs".
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCO 3 + 4: GARANTIA + GERAÇÃO -->
+  <div class="garantia-grid">
+    <div class="card">
+      <div class="section-label"><span>03 — Garantias</span></div>
+
+      <!-- Perfis salvos -->
+      <div class="field-label" style="margin-bottom:8px">🗂 Perfis salvos <span class="saved-pill" id="saved-pill">✓ salvo</span></div>
+      <div id="garantia-profiles" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px"></div>
+
+      <!-- Nome do perfil -->
+      <div class="garantia-nome-row">
+        <input type="text" id="garantia-nome" placeholder="Nome do perfil (ex: Conta FB, BM Premium...)"
+          style="flex:1;min-width:0;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--sans);font-size:13px;padding:9px 12px;outline:none;">
+        <button class="btn btn-primary btn-sm" onclick="salvarPerfilGarantia()" style="white-space:nowrap;flex-shrink:0">💾 Salvar</button>
+        <button class="btn btn-ghost btn-sm" onclick="novoPerfilGarantia()" style="white-space:nowrap;flex-shrink:0">＋ Novo</button>
+      </div>
+
+      <!-- Textarea -->
+      <div class="field-label">✏️ Texto da garantia ativa</div>
+      <textarea id="garantia-text" rows="6" placeholder="Digite sua garantia aqui...
+
+Ex: ✅ GARANTIA 24h — Em caso de qualquer problema, troca imediata sem perguntas. Suporte via direct 24 horas."></textarea>
+      <div class="garantia-actions-row">
+        <button class="btn btn-ghost btn-sm" onclick="salvarPerfilGarantia()">💾 Atualizar</button>
+        <button class="btn btn-ghost btn-sm" id="btn-deletar-perfil" onclick="deletarPerfilAtivo()" style="color:var(--red);display:none">🗑 Deletar</button>
+        <button class="btn btn-ghost btn-sm" onclick="exportarPerfis()" title="Exportar todos os perfis como arquivo JSON">📤 Exportar perfis</button>
+        <label class="btn btn-ghost btn-sm" style="cursor:pointer;margin:0" title="Importar perfis de um arquivo JSON">
+          📥 Importar perfis
+          <input type="file" accept=".json" onchange="importarPerfis(event)" style="display:none">
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-label"><span>04 — Geração de Texto</span></div>
+      <div class="btn-group" style="flex-direction:row;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+        <button class="btn btn-green" onclick="gerarTextos('contas')">
+          <span>📦</span> Gerar textos CONTAS
+        </button>
+        <button class="btn btn-cyan" onclick="gerarTextos('bms')">
+          <span>📊</span> Gerar textos BM
+        </button>
+      </div>
+      <div class="field-label">📤 Output gerado</div>
+      <textarea id="output-area" readonly placeholder="Textos prontos aparecerão aqui..."></textarea>
+      <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-ghost btn-sm" onclick="copiarOutput()">📋 Copiar tudo</button>
+        <button class="btn btn-ghost btn-sm" onclick="exportarOutput()">📤 Exportar .txt</button>
+        <button class="btn btn-ghost btn-sm" onclick="limparOutput()">🧹 Limpar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCO 5: EXPORTAÇÃO -->
+  <div class="card">
+    <div class="section-label"><span>05 — Exportação</span></div>
+    <div class="export-bar">
+      <span class="export-label">Exportar contas:</span>
+      <button class="btn btn-ghost btn-sm" onclick="exportar('contas','txt')">📄 TXT</button>
+      <button class="btn btn-ghost btn-sm" onclick="exportar('contas','csv')">📊 CSV</button>
+      <div style="width:1px;height:24px;background:var(--border);margin:0 4px"></div>
+      <span class="export-label">Exportar BMs:</span>
+      <button class="btn btn-ghost btn-sm" onclick="exportar('bms','txt')">📄 TXT</button>
+      <button class="btn btn-ghost btn-sm" onclick="exportar('bms','csv')">📊 CSV</button>
+      <div style="width:1px;height:24px;background:var(--border);margin:0 4px"></div>
+
+    </div>
+  </div>
+
+</main>
+
+<!-- TOAST -->
+<div id="toast">
+  <span id="toast-icon">✓</span>
+  <span id="toast-msg">Copiado!</span>
+</div>
+
+<script>
+// ============================================================
+// DATA STORE
+// ============================================================
+let contas = [];
+let bms = [];
+
+// ============================================================
+// THEME TOGGLE
+// ============================================================
+
+function getTheme() {
+  return localStorage.getItem('atomo_theme') || 'light';
+}
+
+function applyTheme(theme) {
+  document.documentElement.classList.remove('theme-light', 'theme-dark');
+  document.documentElement.classList.add('theme-' + theme);
+  localStorage.setItem('atomo_theme', theme);
+}
+
+function toggleTheme() {
+  const novo = getTheme() === 'light' ? 'dark' : 'light';
+  applyTheme(novo);
+}
+
+window.toggleTheme = toggleTheme;
+
+// ============================================================
+// MODELO DE ENTRADA (Modelo 1 = `|`, Modelo 2 = email-first `:`, Modelo 3 = id-first `:`)
+// ============================================================
+
+const PLACEHOLDERS_MODELO = {
+  '1': `Cole suas contas ou links aqui...
+
+Exemplo contas:
+100123456789|MinhaS3nha!|JBSWY3DPEHPK3PXP|email@gmail.com|senhaemail123
+
+Exemplo BMs:
+https://business.facebook.com/overview?business_id=123456|admin@empresa.com`,
+
+  '2': `Cole os perfis no formato Email-first...
+
+Formato: Email : Senha FB : Senha Email : 2FA : Link do perfil
+
+Exemplo:
+AstraKreines7098@hotmail.com:AxUsbvt3ioj1:YOsDlHLgtPb:A2AK YTFL 3C6K 42LD NG5Z U2TP IZ6Z BKLF:https://www.facebook.com/profile.php?id=61572158738047`,
+
+  '3': `Cole os perfis no formato ID-first...
+
+Formato: ID : Senha : 2FA : Link do perfil
+
+Exemplo:
+61589805012823:Smith*@%19:6G2XPNYEUVNZCRKGODT7OSELXCRA4PKK:https://www.facebook.com/profile.php?id=61589805012823`
+};
+
+const HINTS_MODELO = {
+  '1': `<strong>⚡ Formato Modelo 1</strong>
+Cada linha = 1 item<br>
+Campos separados por <code>|</code><br>
+Detecção automática:<br>
+🆔 IDs numéricos (8+ dígitos)<br>
+📧 Emails com @<br>
+🔐 2FA Base32<br>
+🍪 Cookies (c_user=)<br>
+📄 Documentos (/backup)<br>
+🔑 Senhas (fallback)`,
+
+  '2': `<strong>⚡ Formato Modelo 2 — Email-first</strong>
+Separador: <code>:</code><br>
+Cada linha = 1 perfil<br><br>
+<strong>Ordem dos campos:</strong><br>
+1. 📧 Email<br>
+2. 🔑 Senha FB<br>
+3. 🔑 Senha Email<br>
+4. 🔐 2FA<br>
+5. 🔗 Link do perfil<br><br>
+🆔 ID extraído do link automaticamente`,
+
+  '3': `<strong>⚡ Formato Modelo 3 — ID-first</strong>
+Separador: <code>:</code><br>
+Cada linha = 1 perfil<br><br>
+<strong>Ordem dos campos:</strong><br>
+1. 🆔 ID<br>
+2. 🔑 Senha FB<br>
+3. 🔐 2FA<br>
+4. 🔗 Link do perfil<br><br>
+📧 Email não aplicável neste modelo`
+};
+
+function getModeloAtivo() {
+  const checked = document.querySelector('input[name="model"]:checked');
+  return checked ? checked.value : '1';
+}
+
+function onModelChange() {
+  const modelo = getModeloAtivo();
+  localStorage.setItem('atomo_modelo', modelo);
+
+  // Atualiza placeholder, label e dica
+  const inputArea = document.getElementById('input-area');
+  const inputLabel = document.getElementById('input-label');
+  const hint = document.getElementById('format-hint');
+
+  inputArea.placeholder = PLACEHOLDERS_MODELO[modelo];
+  inputLabel.textContent = modelo === '1'
+    ? '📥 Lista bruta (separador: |)'
+    : `📥 Lista bruta (separador: :) — Modelo ${modelo}`;
+  if (hint) hint.innerHTML = HINTS_MODELO[modelo];
+}
+
+function carregarModelo() {
+  const salvo = localStorage.getItem('atomo_modelo') || '1';
+  const radio = document.querySelector(`input[name="model"][value="${salvo}"]`);
+  if (radio) {
+    radio.checked = true;
+    onModelChange();
+  }
+  // Garante que mudanças de radio chamem onModelChange (não dependendo do onchange inline)
+  document.querySelectorAll('input[name="model"]').forEach(r => {
+    r.addEventListener('change', onModelChange);
+  });
+}
+
+// Expor funções no escopo global pra onclicks inline funcionarem em sandboxes
+window.onModelChange = onModelChange;
+window.processarContas = processarContas;
+window.processarBMs = processarBMs;
+
+// ============================================================
+// PARSER ENGINE
+// ============================================================
+
+function classificarCampo(val) {
+  val = val.trim();
+  if (!val) return 'vazio';
+
+  // DOCUMENTO — checar antes de link genérico (sbook.pics é sempre documento)
+  if (/sbook|\/backup/i.test(val)) return 'documento';
+
+  // LINK
+  if (/^https?:\/\//i.test(val)) return 'link';
+
+  // EMAIL
+  if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) return 'email';
+
+  // COOKIES — detectar por múltiplos marcadores comuns
+  if (/c_user=|xs=|datr=|fr=|sb=|wd=|m_pixel_ratio=|ps_l=|ps_n=|dbln=/i.test(val)) return 'cookies';
+
+  // ID — numérico puro 8+
+  if (/^\d{8,}$/.test(val)) return 'id';
+
+  // 2FA — Base32 uppercase 16+ sem símbolos
+  if (/^[A-Z2-7]{16,}$/.test(val)) return '2fa';
+
+  // SENHA — fallback: sem @ sem http, 6-30 chars
+  if (val.length >= 6 && val.length <= 30 && !/@/.test(val) && !/^https?/.test(val)) return 'senha';
+
+  return 'desconhecido';
+}
+
+function parseLinha(linha) {
+  // Formato esperado (posicional):
+  // ID | Senha FB | 2FA (opcional) | Email | Senha Email | Email Rec | Cookies | Documento
+  // A estratégia: classificar cada campo e usar posição relativa como desempate.
+
+  const campos = linha.split('|').map(c => c.trim());
+  if (campos.length === 0) return null;
+
+  let obj = { id:'', senha_fb:'', '2fa':'', email:'', senha_email:'', email_rec:'', documento:'', cookies:'' };
+
+  const tagged = campos.map(c => ({ val: c, tipo: classificarCampo(c) }));
+
+  // Pass 1: pegar campos inequívocos primeiro (id, 2fa, cookies, documento, emails)
+  const usados = new Set();
+
+  for (let i = 0; i < tagged.length; i++) {
+    const { val, tipo } = tagged[i];
+    if (!val) { usados.add(i); continue; }
+    if (tipo === 'cookies'   && !obj.cookies)   { obj.cookies   = val; usados.add(i); }
+    if (tipo === 'documento' && !obj.documento)  { obj.documento = val; usados.add(i); }
+    if (tipo === 'id'        && !obj.id)         { obj.id        = val; usados.add(i); }
+    if (tipo === '2fa'       && !obj['2fa'])     { obj['2fa']    = val; usados.add(i); }
+  }
+
+  // Pass 2: emails em ordem — 1º = email principal, demais = recuperação
+  let emailCount = 0;
+  for (let i = 0; i < tagged.length; i++) {
+    if (usados.has(i)) continue;
+    if (tagged[i].tipo === 'email') {
+      if (emailCount === 0)      { obj.email     = tagged[i].val; usados.add(i); emailCount++; }
+      else if (emailCount === 1) { obj.email_rec = tagged[i].val; usados.add(i); emailCount++; }
+    }
+  }
+
+  // Pass 3: senhas — usar posição relativa ao email como âncora
+  // Regra: campo imediatamente ANTES do email principal = Senha FB
+  //        campo imediatamente APÓS  o email principal = Senha Email
+  const emailIdx = tagged.findIndex(t => t.val === obj.email);
+
+  if (emailIdx > 0) {
+    // Campo antes do email (não usado, não email, não id, não 2fa)
+    for (let i = emailIdx - 1; i >= 0; i--) {
+      if (usados.has(i)) continue;
+      const tipo = tagged[i].tipo;
+      if (tipo === 'senha' || tipo === 'desconhecido') {
+        obj.senha_fb = tagged[i].val;
+        usados.add(i);
+        break;
+      }
+    }
+    // Campo depois do email
+    for (let i = emailIdx + 1; i < tagged.length; i++) {
+      if (usados.has(i)) continue;
+      const tipo = tagged[i].tipo;
+      if (tipo === 'senha' || tipo === 'desconhecido') {
+        obj.senha_email = tagged[i].val;
+        usados.add(i);
+        break;
+      }
+    }
+  } else {
+    // Sem email detectado — fallback posicional: 1ª senha = FB, 2ª = email
+    let senhaCount = 0;
+    for (let i = 0; i < tagged.length; i++) {
+      if (usados.has(i)) continue;
+      const tipo = tagged[i].tipo;
+      if (tipo === 'senha' || tipo === 'desconhecido') {
+        if (senhaCount === 0)      { obj.senha_fb    = tagged[i].val; usados.add(i); senhaCount++; }
+        else if (senhaCount === 1) { obj.senha_email = tagged[i].val; usados.add(i); senhaCount++; }
+      }
+    }
+  }
+
+  return obj;
+}
+
+// ============================================================
+// PARSERS — MODELOS 2 e 3 (separador `:`)
+// ============================================================
+
+/**
+ * Limpa formatação Markdown de link comum em mensagens copiadas:
+ * "[https://url](https://url)" → "https://url"
+ * Também desfaz escapes do tipo "\:" se vierem.
+ */
+function limparMarkdown(linha) {
+  let l = linha.trim();
+  // [texto](url) → url
+  l = l.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$2');
+  // Remove escapes
+  l = l.replace(/\\:/g, ':');
+  return l;
+}
+
+/**
+ * Split posicional por `:` preservando a URL no final.
+ * Trata o link como ÂNCORA: tudo após o primeiro "http" pertence à URL.
+ * Retorna array com as partes antes da URL + a URL inteira como último elemento.
+ *
+ * Exemplo Modelo 2 (5 campos): email:senhaFB:senhaEmail:2fa:URL
+ * Exemplo Modelo 3 (4 campos): id:senha:2fa:URL
+ */
+function splitComLink(linha) {
+  const l = limparMarkdown(linha);
+  const matchUrl = l.match(/https?:\/\/\S+/i);
+  if (!matchUrl) {
+    // Sem URL — split simples por ":"
+    return l.split(':').map(c => c.trim());
+  }
+  const url = matchUrl[0];
+  const antes = l.substring(0, matchUrl.index).replace(/:$/, '').trim();
+  const partes = antes.split(':').map(c => c.trim()).filter(c => c.length > 0);
+  partes.push(url);
+  return partes;
+}
+
+/**
+ * Extrai o ID do perfil a partir de uma URL do Facebook.
+ * Suporta: profile.php?id=NNN, /NNN, /username (retorna username)
+ */
+function extrairIdDoLink(url) {
+  if (!url) return '';
+  const m1 = url.match(/[?&]id=(\d+)/);
+  if (m1) return m1[1];
+  const m2 = url.match(/facebook\.com\/(\d{8,})/);
+  if (m2) return m2[1];
+  return '';
+}
+
+/**
+ * MODELO 2 — Email-first
+ * Formato: email : senhaFB : senhaEmail : 2fa : link
+ * 5 campos. Email é o 1º, link o último, ID vem extraído do link.
+ */
+function parseLinhaModelo2(linha) {
+  const partes = splitComLink(linha);
+  if (partes.length < 2) return null;
+
+  const obj = { id:'', senha_fb:'', '2fa':'', email:'', senha_email:'', email_rec:'', documento:'', cookies:'' };
+
+  // Última parte = link (se houver)
+  const link = /^https?:\/\//i.test(partes[partes.length - 1]) ? partes.pop() : '';
+  if (link) obj.id = extrairIdDoLink(link);
+
+  // Mapeamento posicional do restante: [email, senhaFB, senhaEmail, 2fa]
+  if (partes[0]) obj.email      = partes[0];
+  if (partes[1]) obj.senha_fb   = partes[1];
+  if (partes[2]) obj.senha_email = partes[2];
+  if (partes[3]) obj['2fa']     = partes[3];
+
+  return obj;
+}
+
+/**
+ * MODELO 3 — ID-first
+ * Formato: id : senha : 2fa : link
+ * 4 campos. Sem email. ID já vem como 1º campo (validado contra o link).
+ */
+function parseLinhaModelo3(linha) {
+  const partes = splitComLink(linha);
+  if (partes.length < 2) return null;
+
+  const obj = { id:'', senha_fb:'', '2fa':'', email:'', senha_email:'', email_rec:'', documento:'', cookies:'' };
+
+  const link = /^https?:\/\//i.test(partes[partes.length - 1]) ? partes.pop() : '';
+  const idDoLink = extrairIdDoLink(link);
+
+  // Mapeamento posicional: [id, senha, 2fa]
+  if (partes[0]) obj.id       = partes[0];
+  if (partes[1]) obj.senha_fb = partes[1];
+  if (partes[2]) obj['2fa']   = partes[2];
+
+  // Se o ID do campo não bater com o do link, prioriza o do link (fonte mais confiável)
+  if (idDoLink && !obj.id) obj.id = idDoLink;
+
+  return obj;
+}
+
+function parseLinhasBM(linha) {
+  // Each line can contain multiple BM entries: ID|link|email|link|email|...
+  // Strategy: pair each link with the next email found after it
+  const campos = linha.split('|').map(c => c.trim()).filter(c => c.length > 0);
+  const results = [];
+
+  // First pass: tag each field
+  const tagged = campos.map(c => ({ val: c, tipo: classificarCampo(c) }));
+
+  // Pull out standalone ID (numeric 8+) — not a BM field, just ignore
+  // Walk through and pair link → next email
+  let i = 0;
+  while (i < tagged.length) {
+    if (tagged[i].tipo === 'link') {
+      const link = tagged[i].val;
+      let email = '';
+      let nextI = i + 1; // default: advance by 1 if no email found
+      // Look ahead for the next email
+      for (let j = i + 1; j < tagged.length; j++) {
+        if (tagged[j].tipo === 'email') {
+          email = tagged[j].val;
+          nextI = j + 1; // advance past the email
+          break;
+        }
+        // If we hit another link before finding email, stop
+        if (tagged[j].tipo === 'link') {
+          nextI = j; // start next iteration at this link
+          break;
+        }
+      }
+      results.push({ link, email });
+      i = nextI;
+    } else {
+      i++;
+    }
+  }
+
+  // Fallback: if no links found, try single obj
+  if (results.length === 0) {
+    let obj = { link: '', email: '' };
+    for (const { val, tipo } of tagged) {
+      if (tipo === 'email' && !obj.email) obj.email = val;
+      else if (!obj.link && val.includes('business.facebook')) obj.link = val;
+    }
+    if (obj.link || obj.email) results.push(obj);
+  }
+
+  return results; // now returns ARRAY
+}
+
+// ============================================================
+// PROCESS
+// ============================================================
+
+function processarContas() {
+  const texto = document.getElementById('input-area').value.trim();
+  if (!texto) { toast('Cole os dados primeiro!', 'error'); return; }
+
+  const modelo = getModeloAtivo();
+  const linhas = texto.split('\n').filter(l => l.trim().length > 0);
+  const novas = [];
+  let dups = 0;
+  const idsVistos = new Set(contas.map(c => c.id).filter(Boolean));
+
+  // Seleciona o parser conforme modelo
+  const parser = modelo === '2' ? parseLinhaModelo2
+              : modelo === '3' ? parseLinhaModelo3
+              : parseLinha;
+
+  for (const l of linhas) {
+    // Modelo 1: pula linhas que são URL pura (são BMs)
+    // Modelo 2/3: a URL faz parte da linha, não pular
+    if (modelo === '1' && /^https?:\/\//i.test(l.trim())) continue;
+
+    const parsed = parser(l);
+    if (!parsed) continue;
+
+    if (parsed.id && idsVistos.has(parsed.id)) { dups++; continue; }
+    if (parsed.id) idsVistos.add(parsed.id);
+    novas.push(parsed);
+  }
+
+  contas = [...contas, ...novas];
+  renderContas();
+  switchTab('contas');
+  updateStats(novas.length, dups);
+  const nomeModelo = modelo === '2' ? 'Modelo 2 (email-first)' : modelo === '3' ? 'Modelo 3 (id-first)' : 'Modelo 1';
+  toast(`✅ ${novas.length} conta(s) processada(s) via ${nomeModelo}${dups > 0 ? `, ${dups} dup(s) removida(s)` : ''}`, 'success');
+}
+
+function processarBMs() {
+  const texto = document.getElementById('input-area').value.trim();
+  if (!texto) { toast('Cole os dados primeiro!', 'error'); return; }
+
+  const linhas = texto.split('\n').filter(l => l.trim().length > 0);
+  const novas = [];
+  let dups = 0;
+  const linksVistos = new Set(bms.map(b => b.link).filter(Boolean));
+
+  for (const l of linhas) {
+    const parsedArr = parseLinhasBM(l);
+    for (const parsed of parsedArr) {
+      if (!parsed.link && !parsed.email) continue;
+      if (parsed.link && linksVistos.has(parsed.link)) { dups++; continue; }
+      if (parsed.link) linksVistos.add(parsed.link);
+      novas.push(parsed);
+    }
+  }
+
+  bms = [...bms, ...novas];
+  renderBMs();
+  switchTab('bms');
+  updateStats(novas.length, dups);
+  toast(`✅ ${novas.length} BM(s) processado(s)${dups > 0 ? `, ${dups} dup(s) removido(s)` : ''}`, 'success');
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+
+function renderContas() {
+  const tbody = document.getElementById('body-contas');
+  document.getElementById('count-contas').textContent = `${contas.length} itens`;
+  document.getElementById('hdr-contas').textContent = contas.length;
+
+  if (contas.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="10"><div class="empty-state"><div class="icon">📋</div>Nenhuma conta. Cole e processe.</div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = contas.map((c, i) => `
+    <tr>
+      <td class="row-num">${i+1}</td>
+      <td data-label="ID"><input type="text" value="${esc(c.id)}" class="${fieldClass(c.id,'required')}" placeholder="ID" oninput="contas[${i}].id=this.value;updateFieldClass(this,'required')"></td>
+      <td data-label="Senha FB"><input type="text" value="${esc(c.senha_fb)}" class="${fieldClass(c.senha_fb,'required')}" placeholder="Senha" oninput="contas[${i}].senha_fb=this.value;updateFieldClass(this,'required')"></td>
+      <td data-label="2FA"><input type="text" value="${esc(c['2fa'])}" class="${fieldClass(c['2fa'],'optional')}" placeholder="—" oninput="contas[${i}]['2fa']=this.value"></td>
+      <td data-label="Email"><input type="text" value="${esc(c.email)}" class="${fieldClass(c.email,'required')}" placeholder="email@" oninput="contas[${i}].email=this.value;updateFieldClass(this,'required')"></td>
+      <td data-label="Senha Email"><input type="text" value="${esc(c.senha_email)}" class="${fieldClass(c.senha_email,'optional')}" placeholder="—" oninput="contas[${i}].senha_email=this.value"></td>
+      <td data-label="Email Rec."><input type="text" value="${esc(c.email_rec)}" class="${fieldClass(c.email_rec,'optional')}" placeholder="—" oninput="contas[${i}].email_rec=this.value"></td>
+      <td data-label="Documento"><input type="text" value="${esc(c.documento)}" class="${fieldClass(c.documento,'optional')}" placeholder="—" oninput="contas[${i}].documento=this.value"></td>
+      <td data-label="Cookies"><input type="text" value="${esc(c.cookies)}" class="${fieldClass(c.cookies,'optional')}" placeholder="—" oninput="contas[${i}].cookies=this.value"></td>
+      <td><button class="delete-row" onclick="removerConta(${i})">✕ Remover</button></td>
+    </tr>
+  `).join('');
+
+  updateHeaderStats();
+}
+
+function renderBMs() {
+  const tbody = document.getElementById('body-bms');
+  document.getElementById('count-bms').textContent = `${bms.length} itens`;
+  document.getElementById('hdr-bms').textContent = bms.length;
+
+  if (bms.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state"><div class="icon">📊</div>Nenhum BM. Cole e processe.</div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = bms.map((b, i) => `
+    <tr>
+      <td class="row-num">${i+1}</td>
+      <td data-label="Link BM"><input type="text" value="${esc(b.link)}" class="${fieldClass(b.link,'required')}" placeholder="https://business.facebook.com/..." oninput="bms[${i}].link=this.value;updateFieldClass(this,'required')"></td>
+      <td data-label="Email"><input type="text" value="${esc(b.email)}" class="${fieldClass(b.email,'optional')}" placeholder="admin@..." oninput="bms[${i}].email=this.value"></td>
+      <td><button class="delete-row" onclick="removerBM(${i})">✕ Remover</button></td>
+    </tr>
+  `).join('');
+
+  updateHeaderStats();
+}
+
+function fieldClass(val, tipo) {
+  if (!val || val.trim() === '') {
+    return tipo === 'required' ? 'field-empty' : '';
+  }
+  // Heurística: valor muito curto = suspeito
+  if (val.length < 4 && tipo === 'required') return 'field-warn';
+  return 'field-ok';
+}
+
+function updateFieldClass(input, tipo) {
+  input.classList.remove('field-empty','field-warn','field-ok');
+  const cl = fieldClass(input.value, tipo);
+  if (cl) input.classList.add(cl);
+}
+
+function esc(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ============================================================
+// TABS
+// ============================================================
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    t.classList.toggle('active', (i===0 && tab==='contas') || (i===1 && tab==='bms'));
+  });
+  document.getElementById('tab-contas').classList.toggle('active', tab==='contas');
+  document.getElementById('tab-bms').classList.toggle('active', tab==='bms');
+}
+
+// ============================================================
+// ADD / REMOVE ROWS
+// ============================================================
+
+function addRowContas() {
+  contas.push({ id:'', senha_fb:'', '2fa':'', email:'', senha_email:'', email_rec:'', documento:'', cookies:'' });
+  renderContas();
+}
+
+function addRowBM() {
+  bms.push({ link:'', email:'' });
+  renderBMs();
+}
+
+function removerConta(i) {
+  contas.splice(i, 1);
+  renderContas();
+}
+
+function removerBM(i) {
+  bms.splice(i, 1);
+  renderBMs();
+}
+
+function limparTabela(tipo) {
+  if (!confirm(`Limpar toda a tabela de ${tipo === 'contas' ? 'Contas' : 'BMs'}?`)) return;
+  if (tipo === 'contas') { contas = []; renderContas(); }
+  else { bms = []; renderBMs(); }
+  toast('Tabela limpa', 'success');
+}
+
+// ============================================================
+// GARANTIA — PERFIS MÚLTIPLOS
+// ============================================================
+
+let garantiaPerfis = {}; // { nome: texto }
+let garantiaAtivo = null; // nome do perfil ativo
+
+function carregarGarantia() {
+  try {
+    const raw = localStorage.getItem('atomo_garantia_perfis');
+    garantiaPerfis = raw ? JSON.parse(raw) : {};
+    garantiaAtivo = localStorage.getItem('atomo_garantia_ativo') || null;
+  } catch(e) {
+    garantiaPerfis = {};
+  }
+
+  // Migrar garantia antiga (formato legado)
+  const legado = localStorage.getItem('atomo_garantia');
+  if (legado && Object.keys(garantiaPerfis).length === 0) {
+    garantiaPerfis['Padrão'] = legado;
+    garantiaAtivo = 'Padrão';
+    persistirGarantias();
+    localStorage.removeItem('atomo_garantia');
+  }
+
+  if (garantiaAtivo && garantiaPerfis[garantiaAtivo]) {
+    document.getElementById('garantia-text').value = garantiaPerfis[garantiaAtivo];
+    document.getElementById('garantia-nome').value = garantiaAtivo;
+  }
+  renderPerfisGarantia();
+}
+
+function persistirGarantias() {
+  localStorage.setItem('atomo_garantia_perfis', JSON.stringify(garantiaPerfis));
+  localStorage.setItem('atomo_garantia_ativo', garantiaAtivo || '');
+}
+
+function renderPerfisGarantia() {
+  const container = document.getElementById('garantia-profiles');
+  const nomes = Object.keys(garantiaPerfis);
+  if (nomes.length === 0) {
+    container.innerHTML = '<span style="font-size:11px;color:var(--text3)">Nenhum perfil salvo ainda.</span>';
+    document.getElementById('btn-deletar-perfil').style.display = 'none';
+    return;
+  }
+  container.innerHTML = nomes.map(nome => `
+    <button class="profile-pill ${nome === garantiaAtivo ? 'active' : ''}" onclick="selecionarPerfil('${nome.replace(/'/g,"\'")}')">
+      ${nome}
+    </button>
+  `).join('');
+  document.getElementById('btn-deletar-perfil').style.display = garantiaAtivo ? 'inline-flex' : 'none';
+}
+
+function selecionarPerfil(nome) {
+  garantiaAtivo = nome;
+  document.getElementById('garantia-text').value = garantiaPerfis[nome] || '';
+  document.getElementById('garantia-nome').value = nome;
+  persistirGarantias();
+  renderPerfisGarantia();
+  showSavedPill();
+}
+
+function salvarPerfilGarantia() {
+  const nome = document.getElementById('garantia-nome').value.trim();
+  const texto = document.getElementById('garantia-text').value;
+  if (!nome) { toast('Digite um nome para o perfil!', 'error'); return; }
+  garantiaPerfis[nome] = texto;
+  garantiaAtivo = nome;
+  persistirGarantias();
+  renderPerfisGarantia();
+  showSavedPill();
+  toast(`✅ Perfil "${nome}" salvo!`, 'success');
+}
+
+function novoPerfilGarantia() {
+  document.getElementById('garantia-nome').value = '';
+  document.getElementById('garantia-text').value = '';
+  garantiaAtivo = null;
+  renderPerfisGarantia();
+  document.getElementById('garantia-nome').focus();
+}
+
+function deletarPerfilAtivo() {
+  if (!garantiaAtivo) { toast('Nenhum perfil selecionado!', 'error'); return; }
+  const nome = garantiaAtivo;
+  delete garantiaPerfis[nome];
+  garantiaAtivo = Object.keys(garantiaPerfis)[0] || null;
+  document.getElementById('garantia-nome').value = garantiaAtivo || '';
+  document.getElementById('garantia-text').value = garantiaAtivo ? (garantiaPerfis[garantiaAtivo] || '') : '';
+  persistirGarantias();
+  renderPerfisGarantia();
+  toast(`🗑 Perfil "${nome}" deletado`, 'success');
+}
+
+function showSavedPill() {
+  const pill = document.getElementById('saved-pill');
+  pill.classList.add('show');
+  setTimeout(() => pill.classList.remove('show'), 2000);
+}
+
+function exportarPerfis() {
+  if (Object.keys(garantiaPerfis).length === 0) {
+    toast('Nenhum perfil para exportar!', 'error'); return;
+  }
+  const dados = JSON.stringify(garantiaPerfis, null, 2);
+  const blob = new Blob([dados], { type: 'application/json;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `atomo_garantias_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('📤 Perfis exportados!', 'success');
+}
+
+function importarPerfis(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const dados = JSON.parse(e.target.result);
+      if (typeof dados !== 'object' || Array.isArray(dados)) throw new Error();
+      // Merge com perfis existentes
+      let novos = 0;
+      for (const [nome, texto] of Object.entries(dados)) {
+        if (!garantiaPerfis[nome]) novos++;
+        garantiaPerfis[nome] = texto;
+      }
+      persistirGarantias();
+      renderPerfisGarantia();
+      toast(`✅ ${Object.keys(dados).length} perfil(is) importado(s), ${novos} novo(s)!`, 'success');
+    } catch {
+      toast('Arquivo inválido. Use um JSON exportado aqui.', 'error');
+    }
+    event.target.value = ''; // reset input
+  };
+  reader.readAsText(file);
+}
+
+// Compatibilidade legada
+function salvarGarantia() { salvarPerfilGarantia(); }
+
+// ============================================================
+// GERAÇÃO DE TEXTO
+// ============================================================
+
+function gerarTextos(tipo) {
+  const garantia = document.getElementById('garantia-text').value.trim() || '(sem garantia definida)';
+
+  if (tipo === 'contas') {
+    if (contas.length === 0) { toast('Nenhuma conta para gerar!', 'error'); return; }
+    const textos = contas.map(c => {
+      return `📦 Acesso ao Perfil:
+
+🆔 ID: ${c.id || '—'}
+🔑 Senha: ${c.senha_fb || '—'}
+📧 Email: ${c.email || '—'}
+🔑 Senha do Email: ${c.senha_email || '—'}
+📬 Email Recuperação: ${c.email_rec || 'Não possui'}
+🔐 2FA: ${c['2fa'] || 'Não possui'}
+📄 Documento: ${c.documento || 'Não possui'}
+🍪 Cookies: ${c.cookies || 'Não possui'}
+
+${garantia}`;
+    });
+    document.getElementById('output-area').value = textos.join('\n\n' + '-'.repeat(40) + '\n\n');
+    toast(`📦 ${contas.length} texto(s) gerado(s)`, 'success');
+
+  } else {
+    if (bms.length === 0) { toast('Nenhum BM para gerar!', 'error'); return; }
+    const linhasBM = bms.map(b => {
+      return `📊 LINK DA BM
+
+🔗 Acesso: ${b.link || '—'}
+📧 Email: ${b.email || '—'}`;
+    });
+    const separador = '\n\n' + '-'.repeat(40) + '\n\n';
+    const textoFinal = linhasBM.join(separador) + '\n\n' + garantia;
+    document.getElementById('output-area').value = textoFinal;
+    toast(`📊 ${bms.length} texto(s) BM gerado(s)`, 'success');
+  }
+}
+
+// ============================================================
+// COPY / CLEAR
+// ============================================================
+
+function copiarOutput() {
+  const area = document.getElementById('output-area');
+  if (!area.value) { toast('Nada para copiar!', 'error'); return; }
+  navigator.clipboard.writeText(area.value).then(() => {
+    toast('📋 Copiado para a área de transferência!', 'success');
+  }).catch(() => {
+    area.select();
+    document.execCommand('copy');
+    toast('📋 Copiado!', 'success');
+  });
+}
+
+function limparOutput() {
+  document.getElementById('output-area').value = '';
+}
+
+function limpar() {
+  document.getElementById('input-area').value = '';
+  document.getElementById('output-area').value = '';
+  contas = []; bms = [];
+  renderContas(); renderBMs();
+  const sb = document.getElementById('stats-bar');
+  if (sb) sb.style.display = 'none';
+  toast('🧹 Tudo limpo', 'success');
+}
+
+// ============================================================
+// EXPORTAÇÃO
+// ============================================================
+
+function exportar(tipo, fmt) {
+  const dados = tipo === 'contas' ? contas : bms;
+  if (dados.length === 0) { toast('Nada para exportar!', 'error'); return; }
+
+  let conteudo = '';
+  let mime = 'text/plain';
+  let ext = fmt;
+
+  if (fmt === 'csv') {
+    mime = 'text/csv';
+    if (tipo === 'contas') {
+      conteudo = 'ID,Senha FB,2FA,Email,Senha Email,Email Rec,Documento,Cookies\n';
+      conteudo += dados.map(c =>
+        [c.id,c.senha_fb,c['2fa'],c.email,c.senha_email,c.email_rec,c.documento,c.cookies ? 'Sim' : 'Não']
+        .map(v => `"${(v||'').replace(/"/g,'""')}"`)
+        .join(',')
+      ).join('\n');
+    } else {
+      conteudo = 'Link,Email\n';
+      conteudo += dados.map(b =>
+        [b.link,b.email].map(v => `"${(v||'').replace(/"/g,'""')}"`)
+        .join(',')
+      ).join('\n');
+    }
+  } else {
+    if (tipo === 'contas') {
+      conteudo = dados.map(c =>
+        `ID: ${c.id} | Senha: ${c.senha_fb} | 2FA: ${c['2fa']||''} | Email: ${c.email} | SenhaEmail: ${c.senha_email||''} | EmailRec: ${c.email_rec||''} | Doc: ${c.documento||''} | Cookies: ${c.cookies?'Sim':'Não'}`
+      ).join('\n');
+    } else {
+      conteudo = dados.map(b => `Link: ${b.link} | Email: ${b.email}`).join('\n');
+    }
+  }
+
+  download(conteudo, `atomo_${tipo}_${Date.now()}.${ext}`, mime);
+  toast(`📤 Exportando ${dados.length} ${tipo}...`, 'success');
+}
+
+function exportarOutput() {
+  const v = document.getElementById('output-area').value;
+  if (!v) { toast('Gere os textos primeiro!', 'error'); return; }
+  // Normalize line endings to \r\n for Windows compatibility
+  const normalizado = v.replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n/g, '\r\n');
+  download(normalizado, `atomo_textos_${new Date().toISOString().slice(0,10)}.txt`, 'text/plain');
+  toast('📤 Textos exportados!', 'success');
+}
+
+function download(content, filename, mime) {
+  // Add UTF-8 BOM for Windows Notepad compatibility
+  const bom = mime.includes('text') ? '\uFEFF' : '';
+  const blob = new Blob([bom + content], { type: mime + ';charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ============================================================
+// STATS
+// ============================================================
+
+function updateStats(total, dups) {
+  document.getElementById('stats-bar').style.display = 'flex';
+  document.getElementById('st-total').textContent = total;
+  document.getElementById('st-dup').textContent = dups;
+
+  // Contar completos vs incompletos entre contas
+  const completos = contas.filter(c => c.id && c.senha_fb && c.email).length;
+  document.getElementById('st-ok').textContent = completos;
+  document.getElementById('st-warn').textContent = contas.length - completos;
+}
+
+function updateHeaderStats() {
+  document.getElementById('hdr-contas').textContent = contas.length;
+  document.getElementById('hdr-bms').textContent = bms.length;
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+
+function toast(msg, type = 'success') {
+  const el = document.getElementById('toast');
+  const icon = document.getElementById('toast-icon');
+  const msgEl = document.getElementById('toast-msg');
+
+  el.className = type;
+  icon.textContent = type === 'success' ? '✓' : '✕';
+  msgEl.textContent = msg;
+  el.classList.add('show');
+
+  clearTimeout(el._timer);
+  el._timer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+
+document.addEventListener('DOMContentLoaded', () => {
+  carregarModelo();
+  carregarGarantia();
+  renderContas();
+  renderBMs();
+});
+</script>
+</body>
+</html>
